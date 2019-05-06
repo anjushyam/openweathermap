@@ -4,33 +4,20 @@ namespace AppBundle\Service\Helper;
 
 class WeatherMapServiceHelper
 {
-    /**
-     * @var $container
-     */
-    private $container;
-
-    /**
-     * WeatherMapServiceHelper constructor.
-     */
-    public function __construct()
-    {
-        global $kernel;
-
-        $this->container = $kernel->getContainer();
-    }
 
     /**
      * Generate URL for openweathermap API endpoint to get current weather information
      *
+     * @param string $weatherMapApiUrl
+     * @param string $weatherMapAppId
      * @param string $city
      *
      * @return string
      *
      */
-    public function generateWeatherMapURL(string $city)
+    public function generateWeatherMapURL(string $weatherMapApiUrl, string $weatherMapAppId, string $city)
     {
-        return $this->container->getParameter('weather_api_url') . '?q=' . $city .
-            '&appid=' . $this->container->getParameter('app_id');
+        return $weatherMapApiUrl . '?q=' . $city . '&appid=' . $weatherMapAppId;
     }
 
     /**

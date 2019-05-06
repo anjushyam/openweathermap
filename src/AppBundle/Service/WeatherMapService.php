@@ -3,12 +3,18 @@
 namespace AppBundle\Service;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Service\Helper\CurlServiceHelper;
 use AppBundle\Service\Helper\WeatherMapServiceHelper;
-use AppBundle\Entity\Weather;
+use AppBundle\Transformer\WeatherTransformer;
 
 class WeatherMapService
 {
+    /**
+     * @var ContainerInterface $container
+     */
+    private $container;
+
     /**
      * @var CurlServiceHelper $curlServiceHelper
      */
@@ -20,18 +26,19 @@ class WeatherMapService
     private $weatherMapServiceHelper;
 
     /**
-     * @var Weather $weather
+     * @var WeatherTransformer $weatherTransformer
      */
-    private $weather;
+    private $weatherTransformer;
 
     /**
      * WeatherMapService constructor.
      */
-    public function __construct()
+    public function __construct(ContainerInterface $container)
     {
+        $this->container = $container;
         $this->curlServiceHelper = new CurlServiceHelper();
         $this->weatherMapServiceHelper = new WeatherMapServiceHelper();
-        $this->weather = new Weather();
+        $this->weatherTransformer = new WeatherTransformer();
     }
 
     /**
@@ -45,7 +52,11 @@ class WeatherMapService
     public function getCurrentWeather(string $city)
     {
         $response = $this->curlServiceHelper->getData(
-            $this->weatherMapServiceHelper->generateWeatherMapURL($city)
+            $this->weatherMapServiceHelper->generateWeatherMapURL(
+                $this->container->getParameter('weathermap.api_url'),
+                $this->container->getParameter('weathermap.app_id'),
+                $city
+            )
         );
 
         if ($response) {
@@ -55,7 +66,7 @@ class WeatherMapService
                 $weatherData['wind']['deg'] = (isset($weatherData['wind']['deg'])) ?
                     $this->weatherMapServiceHelper->windDegreeToName($weatherData['wind']['deg']) : '';
 
-                return $this->weather->weatherData($weatherData);
+                return $this->weatherTransformer->weatherData($weatherData);
             }
         }
 
