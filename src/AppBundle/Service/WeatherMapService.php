@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Service\Helper\CurlServiceHelper;
 use AppBundle\Service\Helper\WeatherMapServiceHelper;
 use AppBundle\Transformer\WeatherTransformer;
@@ -11,9 +10,14 @@ use AppBundle\Transformer\WeatherTransformer;
 class WeatherMapService
 {
     /**
-     * @var ContainerInterface $container
+     * @var $weatherMapApiUrl
      */
-    private $container;
+    private $weatherMapApiUrl;
+
+    /**
+     * @var $weatherMapAppId
+     */
+    private $weatherMapAppId;
 
     /**
      * @var CurlServiceHelper $curlServiceHelper
@@ -32,10 +36,14 @@ class WeatherMapService
 
     /**
      * WeatherMapService constructor.
+     *
+     * @param $weatherMapApiUrl
+     * @param $weatherMapAppId
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($weatherMapApiUrl, $weatherMapAppId)
     {
-        $this->container = $container;
+        $this->weatherMapApiUrl = $weatherMapApiUrl;
+        $this->weatherMapAppId = $weatherMapAppId;
         $this->curlServiceHelper = new CurlServiceHelper();
         $this->weatherMapServiceHelper = new WeatherMapServiceHelper();
         $this->weatherTransformer = new WeatherTransformer();
@@ -53,8 +61,8 @@ class WeatherMapService
     {
         $response = $this->curlServiceHelper->getData(
             $this->weatherMapServiceHelper->generateWeatherMapURL(
-                $this->container->getParameter('weathermap.api_url'),
-                $this->container->getParameter('weathermap.app_id'),
+                $this->weatherMapApiUrl,
+                $this->weatherMapAppId,
                 $city
             )
         );
