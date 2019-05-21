@@ -39,10 +39,10 @@ class WeatherMapService
      *
      * @param WeatherMapServiceHelper $weatherMapServiceHelper
      * @param WeatherTransformer $weatherTransformer
-     * @param string $weatherMapApiUrl
+     * @param string $weatherApiUrl
      * @param string $weatherMapAppId
      */
-    public function __construct(WeatherMapServiceHelper $weatherMapServiceHelper, WeatherTransformer $weatherTransformer, GuzzleRequestHandler $guzzleRequestHandler, $weatherMapApiUrl, $weatherMapAppId)
+    public function __construct(WeatherMapServiceHelper $weatherMapServiceHelper, WeatherTransformer $weatherTransformer, GuzzleRequestHandler $guzzleRequestHandler, $weatherApiUrl, $weatherMapAppId)
     {
         $this->weatherMapServiceHelper = $weatherMapServiceHelper;
         $this->weatherTransformer = $weatherTransformer;
