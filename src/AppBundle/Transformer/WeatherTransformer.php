@@ -13,7 +13,7 @@ class WeatherTransformer
 
 
     /**
-     * WeatherDto constructor.
+     * WeatherTransformer constructor.
      */
     public function __construct()
     {
@@ -21,14 +21,14 @@ class WeatherTransformer
     }
 
     /**
-     * Function to set and get weather data
+     * Function to transform weather data to object
      *
      * @param array $weatherData
      *
      * @return Weather
      *
      */
-    public function weatherData(array $weatherData)
+    public function transform(array $weatherData)
     {
         $this->weather->setWeatherType($weatherData['weather'][0]['main']);
         $this->weather->setTemperature(

@@ -4,22 +4,6 @@ namespace AppBundle\Service\Helper;
 
 class WeatherMapServiceHelper
 {
-
-    /**
-     * Generate URL for openweathermap API endpoint to get current weather information
-     *
-     * @param string $weatherMapApiUrl
-     * @param string $weatherMapAppId
-     * @param string $city
-     *
-     * @return string
-     *
-     */
-    public function generateWeatherMapURL(string $weatherMapApiUrl, string $weatherMapAppId, string $city)
-    {
-        return $weatherMapApiUrl . '?q=' . $city . '&appid=' . $weatherMapAppId;
-    }
-
     /**
      * Get wind direction name by degree
      *
@@ -28,7 +12,7 @@ class WeatherMapServiceHelper
      * @return string
      *
      */
-    public function windDegreeToName(float $windDirection)
+    public function windDegreeToNameConverter(float $windDirection)
     {
         $compass = ['North', 'NNE', 'NorthEast', 'ENE', 'East', 'ESE', 'SouthEast', 'SSE', 'South', 'SSW', 'SouthWest', 'WSW', 'West', 'WNW', 'NorthWest', 'NNW'];
 

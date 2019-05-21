@@ -8,7 +8,8 @@ imports:
 parameters:
     locale: en
     weathermap.app_id: '7a879beb643bc38e0a72eab5e26fb889'
-    weathermap.api_url: 'api.openweathermap.org/data/2.5/weather'
+    weathermap.api_baseurl: 'api.openweathermap.org/data/2.5/'
+    api_url.weather: '%weathermap.api_baseurl%weather'
 
 framework:
     #esi: ~
@@ -107,3 +108,7 @@ nelmio_api_doc:
         enabled: false
     motd:
         template: 'NelmioApiDocBundle::Components/motd.html.twig'
+
+eight_points_guzzle:
+    clients:
+        api_payment: ~

@@ -3,27 +3,12 @@
 namespace AppBundle\Service;
 
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Service\Helper\CurlServiceHelper;
+use AppBundle\Service\GuzzleRequestHandler;
 use AppBundle\Service\Helper\WeatherMapServiceHelper;
 use AppBundle\Transformer\WeatherTransformer;
 
 class WeatherMapService
 {
-    /**
-     * @var $weatherMapApiUrl
-     */
-    private $weatherMapApiUrl;
-
-    /**
-     * @var $weatherMapAppId
-     */
-    private $weatherMapAppId;
-
-    /**
-     * @var CurlServiceHelper $curlServiceHelper
-     */
-    private $curlServiceHelper;
-
     /**
      * @var WeatherMapServiceHelper $weatherMapServiceHelper
      */
@@ -35,18 +20,35 @@ class WeatherMapService
     private $weatherTransformer;
 
     /**
+     * @var GuzzleRequestHandler $guzzleRequestHandler
+     */
+    private $guzzleRequestHandler;
+
+    /**
+     * @var $weatherApiUrl
+     */
+    private $weatherApiUrl;
+
+    /**
+     * @var $weatherMapAppId
+     */
+    private $weatherMapAppId;
+
+    /**
      * WeatherMapService constructor.
      *
-     * @param $weatherMapApiUrl
-     * @param $weatherMapAppId
+     * @param WeatherMapServiceHelper $weatherMapServiceHelper
+     * @param WeatherTransformer $weatherTransformer
+     * @param string $weatherMapApiUrl
+     * @param string $weatherMapAppId
      */
-    public function __construct($weatherMapApiUrl, $weatherMapAppId)
+    public function __construct(WeatherMapServiceHelper $weatherMapServiceHelper, WeatherTransformer $weatherTransformer, GuzzleRequestHandler $guzzleRequestHandler, $weatherMapApiUrl, $weatherMapAppId)
     {
-        $this->weatherMapApiUrl = $weatherMapApiUrl;
+        $this->weatherMapServiceHelper = $weatherMapServiceHelper;
+        $this->weatherTransformer = $weatherTransformer;
+        $this->guzzleRequestHandler = $guzzleRequestHandler;
+        $this->weatherApiUrl = $weatherApiUrl;
         $this->weatherMapAppId = $weatherMapAppId;
-        $this->curlServiceHelper = new CurlServiceHelper();
-        $this->weatherMapServiceHelper = new WeatherMapServiceHelper();
-        $this->weatherTransformer = new WeatherTransformer();
     }
 
     /**
@@ -57,14 +59,14 @@ class WeatherMapService
      * @return bool|object
      *
      */
-    public function getCurrentWeather(string $city)
+    public function currentWeatherByCity(string $city)
     {
-        $response = $this->curlServiceHelper->getData(
-            $this->weatherMapServiceHelper->generateWeatherMapURL(
-                $this->weatherMapApiUrl,
-                $this->weatherMapAppId,
-                $city
-            )
+        $response = $this->guzzleRequestHandler->get(
+            $this->weatherApiUrl,
+            [
+                'q' => $city,
+                'appid' => $this->weatherMapAppId 
+            ]
         );
 
         if ($response) {
@@ -72,9 +74,9 @@ class WeatherMapService
 
             if (isset($weatherData['cod']) && $weatherData['cod'] == Response::HTTP_OK) {
                 $weatherData['wind']['deg'] = (isset($weatherData['wind']['deg'])) ?
-                    $this->weatherMapServiceHelper->windDegreeToName($weatherData['wind']['deg']) : '';
+                    $this->weatherMapServiceHelper->windDegreeToNameConverter($weatherData['wind']['deg']) : '';
 
-                return $this->weatherTransformer->weatherData($weatherData);
+                return $this->weatherTransformer->transform($weatherData);
             }
         }
 

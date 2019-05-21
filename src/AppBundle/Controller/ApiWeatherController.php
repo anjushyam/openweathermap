@@ -35,7 +35,7 @@ class ApiWeatherController extends FOSRestController
      */
     public function getCurrentWeatherAction($city, WeatherMapService $weatherMapService)
     {
-        $response = $weatherMapService->getCurrentWeather($city);
+        $response = $weatherMapService->currentWeatherByCity($city);
 
         if (!$response) {
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Weather Information is temporarily unavailable');

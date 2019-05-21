@@ -30,5 +30,13 @@ services:
         tags: ['controller.service_arguments']
 
     # add more services, or override services that need manual wiring
+    weather.service.helper:
+        class: AppBundle\Service\Helper\WeatherMapServiceHelper
+    weather.transformer:
+        class: AppBundle\Transformer\WeatherTransformer
+    guzzle.request.handler:
+        class: AppBundle\Service\GuzzleRequestHandler
+
     AppBundle\Service\WeatherMapService:
-        arguments: ["%weathermap.api_url%", "%weathermap.app_id%"]
+        arguments: ["@weather.service.helper", "@weather.transformer", "@guzzle.request.handler", "%api_url.weather%", "%weathermap.app_id%"]
+
